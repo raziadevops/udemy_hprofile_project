@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vproapp
+  labels:
+    app: vproapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vproapp
+  template:
+    metadata:
+      labels:
+        app: vproapp
+    spec:
+      containers:
+      - name: vproapp
+        image: raziadevops/vprofile_udemy_app :latest
+        ports:
+          - name: vproapp_port
+            containerPort: 8080
+            protocol: TCP
+      initContainer:
+        - name: initmydb
+          image: busybox
+          command: ['sh', '-c', 'until nslookup vprodb; do echo waiting for vprodb; sleep 2; done;']
+        - name: init_memcached
+          image: busybox
+          command: ['sh', '-c', 'until nslookup mc01; do echo waiting for vprocache; sleep 2; done;']    
