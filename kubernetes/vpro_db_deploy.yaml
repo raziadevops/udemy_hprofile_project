@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vprodb
+  labels:
+    app: vprodb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vprodb
+  template:
+    metadata:
+      labels:
+        app: vprodb
+    spec:
+      containers:  
+      - name: vprodb_container
+        image: raziadevops/vprofile_udemy_db:latest
+        ports:
+          - name: vprodb_port
+            containerPort: 3306
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app_secret
+                key: db_pass
+      nodeSelector:
+        zone: us-east-1a
+        #app: vprodb
+      volumes: 
+      - name: vprodb-volume
+        awsElasticBlockStore:
+          volumeID: XXXXXXXXXXXXXXXXXXXXX
+          fsType: ext4
+        volumeMounts:
+          - name: vprodb-volume
+            mountPath: /var/lib/mysql
+      
+
+
+  
+        
